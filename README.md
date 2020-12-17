@@ -1,6 +1,10 @@
 [![Jitpack package repository - ESCPOS-ThermalPrinter-Android v2.0.8](https://jitpack.io/v/DantSu/ESCPOS-ThermalPrinter-Android.svg)](https://jitpack.io/#DantSu/ESCPOS-ThermalPrinter-Android/2.0.8)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+# This Android library was created by Alary Franck (DantSu)
+
+The original [java library link](https://github.com/DantSu/ESCPOS-ThermalPrinter-Android).
+
 # Android library for ESC/POS Thermal Printer
 
 Useful library to help Android developers to print with (Bluetooth, TCP, USB) ESC/POS thermal printers.
