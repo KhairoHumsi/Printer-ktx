@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Printer</string>
+    <string name="click_to_print">Click to print !</string>
+    <string name="print_by_bluetooth">Print by bluetooth !</string>
+    <string name="print_by_usb">Print by USB !</string>
+    <string name="ip">IP :</string>
+    <string name="ex_ip">192.168.1.151</string>
+    <string name="port">Port :</string>
+    <string name="ex_port">9100</string>
+    <string name="print_by_tcp">Print by TCP !</string>
+</resources>
