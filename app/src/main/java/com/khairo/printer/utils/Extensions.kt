@@ -2,8 +2,11 @@ package com.khairo.printer.utils
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.util.DisplayMetrics
 import com.dantsu.async.AsyncEscPosPrinter
 import com.dantsu.escposprinter.connection.tcp.TcpConnection
+import com.dantsu.escposprinter.textparser.PrinterTextParserImg
+import com.khairo.printer.R
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -67,8 +70,10 @@ fun Context.printViaWifi(
     val printer = AsyncEscPosPrinter(TcpConnection(ip, port), 203, 48f, 32)
 
     var test =
-//        " [C]<img>${PrinterTextParserImg.bitmapToHexadecimalString(printer, resources.getDrawableForDensity(R.drawable.logo, DisplayMetrics.DENSITY_MEDIUM))}</img>" +
-        "[L]" +
+        "[C]<img>" + PrinterTextParserImg.bitmapToHexadecimalString(printer, this.getApplicationContext().getResources().getDrawableForDensity(R.drawable.logo, DisplayMetrics.DENSITY_MEDIUM)) + "</img>\n" +
+                "[L]\n" +
+                "[C]<img>" + PrinterTextParserImg.bitmapToHexadecimalString(printer, this.getApplicationContext().getResources().getDrawableForDensity(R.drawable.logo2, DisplayMetrics.DENSITY_MEDIUM)) + "</img>\n" +
+                "[L]\n" +
                 "[C]<u><font size='big'>ORDER N°$orderId</font></u>\n" +
                 "[L]\n" +
                 "[C]<u type='double'>${"'on' yyyy-MM-dd 'at' HH:mm:ss".getDateTime()}</u>\n" +

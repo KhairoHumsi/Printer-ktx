@@ -25,6 +25,7 @@ import com.dantsu.async.AsyncTcpEscPosPrint
 import com.dantsu.async.AsyncUsbEscPosPrint
 import com.dantsu.escposprinter.EscPosPrinter
 import com.dantsu.escposprinter.connection.DeviceConnection
+import com.dantsu.escposprinter.connection.tcp.TcpConnection
 import com.dantsu.escposprinter.connection.usb.UsbConnection
 import com.dantsu.escposprinter.connection.usb.UsbPrintersConnections
 import com.dantsu.escposprinter.exceptions.EscPosBarcodeException
@@ -282,24 +283,45 @@ class MainActivity : AppCompatActivity() {
     ==============================================================================================*/
     private fun printTcp() {
         try {
+            val printer = AsyncEscPosPrinter(TcpConnection("192.168.1.151", 9100), 203, 48f, 32)
+
+            val test = "[C]<img>" + PrinterTextParserImg.bitmapToHexadecimalString(printer, this.applicationContext.resources.getDrawableForDensity(R.drawable.logo, DisplayMetrics.DENSITY_MEDIUM)) + "</img>\n" +
+                    "[L]\n" +
+                    "[C]<img>" + PrinterTextParserImg.bitmapToHexadecimalString(printer, this.applicationContext.resources.getDrawableForDensity(R.drawable.logo2, DisplayMetrics.DENSITY_MEDIUM)) + "</img>\n" +
+                    "[L]\n" +
+                    "[C]<u><font size='big'>ORDER N°045</font></u>\n" +
+                    "[L]\n" +
+                    "[C]================================\n" +
+                    "[L]\n" +
+                    "[L]<b>BEAUTIFUL SHIRT</b>[R]9.99e\n" +
+                    "[L]  + Size : S\n" +
+                    "[L]\n" +
+                    "[L]<b>AWESOME HAT</b>[R]24.99e\n" +
+                    "[L]  + Size : 57/58\n" +
+                    "[L]\n" +
+                    "[C]--------------------------------\n" +
+                    "[R]TOTAL PRICE :[R]34.98e\n" +
+                    "[R]TAX :[R]4.23e\n" +
+                    "[L]\n" +
+                    "[C]================================\n" +
+                    "[L]\n" +
+                    "[L]<u><font color='bg-black' size='tall'>Customer :</font></u>\n" +
+                    "[L]Raymond DUPONT\n" +
+                    "[L]5 rue des girafes\n" +
+                    "[L]31547 PERPETES\n" +
+                    "[L]Tel : +33801201456\n" +
+                    "\n" +
+                    "[C]<barcode type='128' height='10'>83125478455134567890</barcode>\n" +
+                    "[L]\n" +
+                    "[C]<qrcode size='20'>http://www.developpeur-web.dantsu.com/</qrcode>\n" +
+                    "[L]\n" +
+                    "[L]\n" +
+                    "[L]\n" +
+                    "[L]\n" +
+                    "[L]\n" +
+                    "[L]\n"
 //             this.printIt(new TcpConnection(ipAddress.getText().toString(), Integer.parseInt(portAddress.getText().toString())));
-            AsyncTcpEscPosPrint(this).execute(
-                printViaWifi(
-                    ip = binding.edittextTcpIp.text.toString().trim(),
-                    port = binding.edittextTcpPort.text.toString().toInt(),
-                    orderId = 15,
-                    totalBill = 125f,
-                    tax = 16,
-                    body = body(),
-                    customer = customer(),
-                    barcode = barcodeGenerator(
-                        branchId = 1,
-                        orderId = 15,
-                        orderValue = 125f,
-                        tax = 16
-                    )
-                )
-            )
+            AsyncTcpEscPosPrint(this).execute(printer.setTextToPrint(test))
         } catch (e: NumberFormatException) {
             AlertDialog.Builder(this)
                 .setTitle("Invalid TCP port address")
