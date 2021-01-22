@@ -1,6 +1,5 @@
 package com.dantsu.escposprinter.connection.tcp
 
-import com.dantsu.escposprinter.connection.DeviceConnection
 import com.dantsu.escposprinter.exceptions.EscPosConnectionException
 import java.io.IOException
 import java.net.InetAddress
@@ -13,7 +12,7 @@ import java.net.Socket
  * @param address IP address of the device
  * @param port    Port of the device
  */
-class TcpConnection(private val address: String, private val port: Int) : DeviceConnection() {
+class TcpConnection(private val address: String, private val port: Int) : TcpDeviceConnection() {
     private var socket: Socket? = null
 
     /**
@@ -22,14 +21,14 @@ class TcpConnection(private val address: String, private val port: Int) : Device
      * @return true if is connected
      */
 
-    override fun isConnected(): Boolean =
+    override suspend fun isConnected(): Boolean =
         socket != null && socket!!.isConnected && super.isConnected()
 
     /**
      * Start socket connection with the TCP device.
      */
     @Throws(EscPosConnectionException::class)
-    override fun connect(): TcpConnection {
+    override suspend fun connect(): TcpConnection {
         if (this.isConnected()) {
             return this
         }
@@ -50,7 +49,7 @@ class TcpConnection(private val address: String, private val port: Int) : Device
     /**
      * Close the socket connection with the TCP device.
      */
-    override fun disconnect(): TcpConnection {
+    override suspend fun disconnect(): TcpConnection {
         data = ByteArray(0)
         if (stream != null) {
             try {

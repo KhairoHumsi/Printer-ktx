@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.util.DisplayMetrics
 import com.dantsu.async.AsyncEscPosPrinter
+import com.dantsu.async.CoroutinesEscPosPrinter
 import com.dantsu.escposprinter.connection.tcp.TcpConnection
 import com.dantsu.escposprinter.textparser.PrinterTextParserImg
 import com.khairo.printer.R
@@ -66,8 +67,8 @@ fun Context.printViaWifi(
     tax: Int,
     customer: String = "",
     barcode: String
-): AsyncEscPosPrinter {
-    val printer = AsyncEscPosPrinter(TcpConnection(ip, port), 203, 48f, 32)
+): CoroutinesEscPosPrinter {
+    val printer = CoroutinesEscPosPrinter(TcpConnection(ip, port), 203, 48f, 32)
 
     var test =
         "[C]<img>" + PrinterTextParserImg.bitmapToHexadecimalString(printer, this.getApplicationContext().getResources().getDrawableForDensity(R.drawable.logo, DisplayMetrics.DENSITY_MEDIUM)) + "</img>\n" +

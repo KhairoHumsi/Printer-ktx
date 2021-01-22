@@ -4,6 +4,9 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.PendingIntent
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -19,10 +22,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
-import com.dantsu.async.AsyncBluetoothEscPosPrint
-import com.dantsu.async.AsyncEscPosPrinter
-import com.dantsu.async.AsyncTcpEscPosPrint
-import com.dantsu.async.AsyncUsbEscPosPrint
+import com.dantsu.async.*
 import com.dantsu.escposprinter.EscPosPrinter
 import com.dantsu.escposprinter.connection.DeviceConnection
 import com.dantsu.escposprinter.connection.tcp.TcpConnection
@@ -50,7 +50,9 @@ class MainActivity : AppCompatActivity() {
 
         binding.apply {
             buttonTcp.setOnClickListener {
-                printTcp()
+                lifecycleScope.launch () {
+                    printTcp()
+                }
             }
 
             buttonBluetooth.setOnClickListener {
@@ -281,9 +283,9 @@ class MainActivity : AppCompatActivity() {
     /*==============================================================================================
     =========================================TCP PART===============================================
     ==============================================================================================*/
-    private fun printTcp() {
+    private suspend fun printTcp() {
         try {
-            val printer = AsyncEscPosPrinter(TcpConnection("192.168.1.151", 9100), 203, 48f, 32)
+            val printer = CoroutinesEscPosPrinter(TcpConnection("192.168.1.151", 9100), 203, 48f, 32)
 
             val test = "[C]<img>" + PrinterTextParserImg.bitmapToHexadecimalString(printer, this.applicationContext.resources.getDrawableForDensity(R.drawable.logo, DisplayMetrics.DENSITY_MEDIUM)) + "</img>\n" +
                     "[L]\n" +
@@ -321,7 +323,10 @@ class MainActivity : AppCompatActivity() {
                     "[L]\n" +
                     "[L]\n"
 //             this.printIt(new TcpConnection(ipAddress.getText().toString(), Integer.parseInt(portAddress.getText().toString())));
-            AsyncTcpEscPosPrint(this).execute(printer.setTextToPrint(test))
+//            AsyncTcpEscPosPrint(this).execute(printer.setTextToPrint(test))
+
+            CoroutinesEscPosPrint(this).execute(printer.setTextToPrint(test))
+
         } catch (e: NumberFormatException) {
             AlertDialog.Builder(this)
                 .setTitle("Invalid TCP port address")
