@@ -4,9 +4,6 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.PendingIntent
-import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -22,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.lifecycleScope
 import com.dantsu.async.*
 import com.dantsu.escposprinter.EscPosPrinter
 import com.dantsu.escposprinter.connection.DeviceConnection
@@ -35,8 +33,7 @@ import com.dantsu.escposprinter.exceptions.EscPosParserException
 import com.dantsu.escposprinter.textparser.PrinterTextParserImg
 import com.khairo.printer.R
 import com.khairo.printer.databinding.ActivityMainBinding
-import com.khairo.printer.utils.barcodeGenerator
-import com.khairo.printer.utils.printViaWifi
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -50,7 +47,7 @@ class MainActivity : AppCompatActivity() {
 
         binding.apply {
             buttonTcp.setOnClickListener {
-                lifecycleScope.launch () {
+                lifecycleScope.launch() {
                     printTcp()
                 }
             }
@@ -285,11 +282,24 @@ class MainActivity : AppCompatActivity() {
     ==============================================================================================*/
     private suspend fun printTcp() {
         try {
-            val printer = CoroutinesEscPosPrinter(TcpConnection("192.168.1.151", 9100), 203, 48f, 32)
+            val printer =
+                CoroutinesEscPosPrinter(TcpConnection("192.168.1.151", 9100), 203, 48f, 32)
 
-            val test = "[C]<img>" + PrinterTextParserImg.bitmapToHexadecimalString(printer, this.applicationContext.resources.getDrawableForDensity(R.drawable.logo, DisplayMetrics.DENSITY_MEDIUM)) + "</img>\n" +
+            val test = "[C]<img>" + PrinterTextParserImg.bitmapToHexadecimalString(
+                printer,
+                this.applicationContext.resources.getDrawableForDensity(
+                    R.drawable.logo,
+                    DisplayMetrics.DENSITY_MEDIUM
+                )
+            ) + "</img>\n" +
                     "[L]\n" +
-                    "[C]<img>" + PrinterTextParserImg.bitmapToHexadecimalString(printer, this.applicationContext.resources.getDrawableForDensity(R.drawable.logo2, DisplayMetrics.DENSITY_MEDIUM)) + "</img>\n" +
+                    "[C]<img>" + PrinterTextParserImg.bitmapToHexadecimalString(
+                printer,
+                this.applicationContext.resources.getDrawableForDensity(
+                    R.drawable.logo2,
+                    DisplayMetrics.DENSITY_MEDIUM
+                )
+            ) + "</img>\n" +
                     "[L]\n" +
                     "[C]<u><font size='big'>ORDER N°045</font></u>\n" +
                     "[L]\n" +
@@ -336,34 +346,36 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun body(): String = "[L]\n" +
-            "[L]    <b>Pizza</b>[R][R]3[R][R]55 $\n" +
-            "[L]      + Olive[R][R]1 $\n" +
-            "[L]      + Cheese[R][R]5 $\n" +
-            "[L]      + Mushroom[R][R]7 $\n" +
-            "[L]\n" +
-            "[L]    <b>Burger</b>[R][R]7[R][R]43.54 $\n" +
-            "[L]      + Cheese[R][R]3 $\n" +
-            "[L]\n" +
-            "[L]    <b>Shawarma</b>[R][R]2[R][R]4 $\n" +
-            "[L]      + Garlic[R][R]0.5 $\n" +
-            "[L]\n" +
-            "[L]    <b>Steak</b>[R][R]3[R][R]75 $\n" +
-            "[L]\n" +
-            "[R] PAYMENT METHOD :[R]Visa\n"
+    private val body: String
+        get() = "[L]\n" +
+                "[L]    <b>Pizza</b>[R][R]3[R][R]55 $\n" +
+                "[L]      + Olive[R][R]1 $\n" +
+                "[L]      + Cheese[R][R]5 $\n" +
+                "[L]      + Mushroom[R][R]7 $\n" +
+                "[L]\n" +
+                "[L]    <b>Burger</b>[R][R]7[R][R]43.54 $\n" +
+                "[L]      + Cheese[R][R]3 $\n" +
+                "[L]\n" +
+                "[L]    <b>Shawarma</b>[R][R]2[R][R]4 $\n" +
+                "[L]      + Garlic[R][R]0.5 $\n" +
+                "[L]\n" +
+                "[L]    <b>Steak</b>[R][R]3[R][R]75 $\n" +
+                "[L]\n" +
+                "[R] PAYMENT METHOD :[R]Visa\n"
 
-    private fun customer(): String =
-        "[C]================================\n" +
-                "[L]\n" +
-                "[L]<b>Delivery</b>[R]5 $\n" +
-                "[L]\n" +
-                "[L]<u><font color='bg-black' size='tall'>Customer :</font></u>\n" +
-                "[L]Name : Mohammad khair\n" +
-                "[L]Phone : 00962787144627\n" +
-                "[L]Area : Khalda\n" +
-                "[L]street : testing street\n" +
-                "[L]building : 9\n" +
-                "[L]Floor : 2\n" +
-                "[L]Apartment : 1\n" +
-                "[L]Note : This order is just for testing\n"
+    val customer: String
+        get() =
+            "[C]================================\n" +
+                    "[L]\n" +
+                    "[L]<b>Delivery</b>[R]5 $\n" +
+                    "[L]\n" +
+                    "[L]<u><font color='bg-black' size='tall'>Customer :</font></u>\n" +
+                    "[L]Name : Mohammad khair\n" +
+                    "[L]Phone : 00962787144627\n" +
+                    "[L]Area : Khalda\n" +
+                    "[L]street : testing street\n" +
+                    "[L]building : 9\n" +
+                    "[L]Floor : 2\n" +
+                    "[L]Apartment : 1\n" +
+                    "[L]Note : This order is just for testing\n"
 }

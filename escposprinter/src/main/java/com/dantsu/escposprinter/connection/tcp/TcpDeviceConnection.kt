@@ -1,6 +1,8 @@
 package com.dantsu.escposprinter.connection.tcp
 
-import com.dantsu.escposprinter.exceptions.EscPosConnectionException
+import android.content.Context
+import com.dantsu.exeption.PrintingException.FINISH_PRINTER_DISCONNECTED
+import com.dantsu.exeption.onException
 import java.io.IOException
 import java.io.OutputStream
 import kotlin.math.floor
@@ -12,8 +14,7 @@ abstract class TcpDeviceConnection {
     @JvmField
     protected var data: ByteArray
 
-    @Throws(EscPosConnectionException::class)
-    abstract suspend fun connect(): TcpDeviceConnection?
+    abstract suspend fun connect(context: Context): TcpDeviceConnection?
     abstract suspend fun disconnect(): TcpDeviceConnection?
 
     /**
@@ -38,18 +39,17 @@ abstract class TcpDeviceConnection {
     /**
      * Send data to the device.
      */
-    @Throws(EscPosConnectionException::class)
-    open suspend fun send() {
-        this.send(0)
+    open suspend fun send(context: Context) {
+        this.send(context, 0)
     }
 
     /**
      * Send data to the device.
      */
-    @Throws(EscPosConnectionException::class)
-    open suspend fun send(addWaitingTime: Int) {
+    open suspend fun send(context: Context, addWaitingTime: Int) {
         if (!isConnected()) {
-            throw EscPosConnectionException("Unable to send data to device.")
+            onException(context, FINISH_PRINTER_DISCONNECTED)
+            return
         }
         try {
             stream!!.write(data)
@@ -62,10 +62,10 @@ abstract class TcpDeviceConnection {
             }
         } catch (e: IOException) {
             e.printStackTrace()
-            throw EscPosConnectionException(e.message)
+            onException(context, FINISH_PRINTER_DISCONNECTED)
         } catch (e: InterruptedException) {
             e.printStackTrace()
-            throw EscPosConnectionException(e.message)
+            onException(context, FINISH_PRINTER_DISCONNECTED)
         }
     }
 

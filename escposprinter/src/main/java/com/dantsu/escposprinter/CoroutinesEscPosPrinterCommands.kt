@@ -1,10 +1,10 @@
 package com.dantsu.escposprinter
 
+import android.content.Context
 import android.graphics.Bitmap
 import com.dantsu.escposprinter.barcode.Barcode
 import com.dantsu.escposprinter.connection.tcp.TcpDeviceConnection
 import com.dantsu.escposprinter.exceptions.EscPosBarcodeException
-import com.dantsu.escposprinter.exceptions.EscPosConnectionException
 import com.dantsu.escposprinter.exceptions.EscPosEncodingException
 import com.google.zxing.EncodeHintType
 import com.google.zxing.WriterException
@@ -27,9 +27,8 @@ class CoroutinesEscPosPrinterCommands @JvmOverloads constructor(
     /**
      * Start socket connection and open stream with the device.
      */
-    @Throws(EscPosConnectionException::class)
-   suspend fun connect(): CoroutinesEscPosPrinterCommands {
-        printerConnection.connect()
+    suspend fun connect(context: Context): CoroutinesEscPosPrinterCommands {
+        printerConnection.connect(context)
         return this
     }
 
@@ -43,7 +42,7 @@ class CoroutinesEscPosPrinterCommands @JvmOverloads constructor(
     /**
      * Reset printers parameters.
      */
-   suspend fun reset() {
+    suspend fun reset() {
         printerConnection.write(RESET_PRINTER)
     }
 
@@ -54,7 +53,7 @@ class CoroutinesEscPosPrinterCommands @JvmOverloads constructor(
      * @param align Set the alignment of text and barcodes. Use EscPosPrinterCommands.TEXT_ALIGN_... constants
      * @return Fluent interface
      */
-   suspend fun setAlign(align: ByteArray?): CoroutinesEscPosPrinterCommands {
+    suspend fun setAlign(align: ByteArray?): CoroutinesEscPosPrinterCommands {
         if (!printerConnection.isConnected()) {
             return this
         }
@@ -186,7 +185,7 @@ class CoroutinesEscPosPrinterCommands @JvmOverloads constructor(
      * @param image Bytes contain the image in ESC/POS command
      * @return Fluent interface
      */
-   suspend fun printImage(image: ByteArray?): CoroutinesEscPosPrinterCommands {
+    suspend fun printImage(image: ByteArray?): CoroutinesEscPosPrinterCommands {
         if (!printerConnection.isConnected()) {
             return this
         }
@@ -200,7 +199,7 @@ class CoroutinesEscPosPrinterCommands @JvmOverloads constructor(
      * @param barcode Instance of Class that implement Barcode
      * @return Fluent interface
      */
-   suspend fun printBarcode(barcode: Barcode): CoroutinesEscPosPrinterCommands {
+    suspend fun printBarcode(barcode: Barcode): CoroutinesEscPosPrinterCommands {
         if (!printerConnection.isConnected()) {
             return this
         }
@@ -234,7 +233,11 @@ class CoroutinesEscPosPrinterCommands @JvmOverloads constructor(
      * @return Fluent interface
      */
     @Throws(EscPosEncodingException::class)
-   suspend fun printQRCode(qrCodeType: Int, text: String, size: Int): CoroutinesEscPosPrinterCommands {
+    suspend fun printQRCode(
+        qrCodeType: Int,
+        text: String,
+        size: Int
+    ): CoroutinesEscPosPrinterCommands {
         var size = size
         if (!printerConnection.isConnected()) {
             return this
@@ -313,13 +316,15 @@ class CoroutinesEscPosPrinterCommands @JvmOverloads constructor(
      * @return Fluent interface
      */
     @JvmOverloads
-    @Throws(EscPosConnectionException::class)
-    suspend fun newLine(align: ByteArray? = null): CoroutinesEscPosPrinterCommands {
+    suspend fun newLine(
+        context: Context,
+        align: ByteArray? = null
+    ): CoroutinesEscPosPrinterCommands {
         if (!printerConnection.isConnected()) {
             return this
         }
         printerConnection.write(byteArrayOf(LF))
-        printerConnection.send()
+        printerConnection.send(context)
         if (align != null) {
             printerConnection.write(align)
         }
@@ -332,14 +337,13 @@ class CoroutinesEscPosPrinterCommands @JvmOverloads constructor(
      * @param dots Number of dots to feed (0 <= dots <= 255)
      * @return Fluent interface
      */
-    @Throws(EscPosConnectionException::class)
-   suspend fun feedPaper(dots: Int): CoroutinesEscPosPrinterCommands {
+    suspend fun feedPaper(context: Context, dots: Int): CoroutinesEscPosPrinterCommands {
         if (!printerConnection.isConnected()) {
             return this
         }
         if (dots > 0) {
             printerConnection.write(byteArrayOf(0x1B, 0x4A, dots.toByte()))
-            printerConnection.send(dots)
+            printerConnection.send(context, dots)
         }
         return this
     }
@@ -349,13 +353,12 @@ class CoroutinesEscPosPrinterCommands @JvmOverloads constructor(
      *
      * @return Fluent interface
      */
-    @Throws(EscPosConnectionException::class)
-   suspend fun cutPaper(): CoroutinesEscPosPrinterCommands {
+    suspend fun cutPaper(context: Context): CoroutinesEscPosPrinterCommands {
         if (!printerConnection.isConnected()) {
             return this
         }
         printerConnection.write(byteArrayOf(0x1D, 0x56, 0x01))
-        printerConnection.send(100)
+        printerConnection.send(context, 100)
         return this
     }
 

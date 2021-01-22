@@ -1,8 +1,8 @@
 package com.dantsu.escposprinter
 
+import android.content.Context
 import com.dantsu.escposprinter.connection.tcp.TcpDeviceConnection
 import com.dantsu.escposprinter.exceptions.EscPosBarcodeException
-import com.dantsu.escposprinter.exceptions.EscPosConnectionException
 import com.dantsu.escposprinter.exceptions.EscPosEncodingException
 import com.dantsu.escposprinter.exceptions.EscPosParserException
 import com.dantsu.escposprinter.textparser.*
@@ -10,6 +10,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 class CoroutinesEscPosPrinter(
+    context: Context,
     printer: CoroutinesEscPosPrinterCommands?,
     printerDpi: Int,
     printerWidthMM: Float,
@@ -26,11 +27,13 @@ class CoroutinesEscPosPrinter(
      * @param printerNbrCharactersPerLine The maximum number of characters that can be printed on a line.
      */
     constructor(
+        context: Context,
         printerConnection: TcpDeviceConnection?,
         printerDpi: Int,
         printerWidthMM: Float,
         printerNbrCharactersPerLine: Int
     ) : this(
+        context,
         printerConnection?.let { CoroutinesEscPosPrinterCommands(it) },
         printerDpi,
         printerWidthMM,
@@ -48,12 +51,14 @@ class CoroutinesEscPosPrinter(
      * @param charsetEncoding             Set the charset encoding.
      */
     constructor(
+        context: Context,
         printerConnection: TcpDeviceConnection?,
         printerDpi: Int,
         printerWidthMM: Float,
         printerNbrCharactersPerLine: Int,
         charsetEncoding: EscPosCharsetEncoding?
     ) : this(
+        context,
         printerConnection?.let { CoroutinesEscPosPrinterCommands(it, charsetEncoding) },
         printerDpi,
         printerWidthMM,
@@ -88,13 +93,16 @@ class CoroutinesEscPosPrinter(
      */
     @JvmOverloads
     @Throws(
-        EscPosConnectionException::class,
         EscPosParserException::class,
         EscPosEncodingException::class,
         EscPosBarcodeException::class
     )
-    suspend fun printFormattedText(text: String?, mmFeedPaper: Float = 20f): CoroutinesEscPosPrinter {
-        return this.printFormattedText(text, mmToPx(mmFeedPaper))
+    suspend fun printFormattedText(
+        context: Context,
+        text: String?,
+        mmFeedPaper: Float = 20f
+    ): CoroutinesEscPosPrinter {
+        return this.printFormattedText(context, text, mmToPx(mmFeedPaper))
     }
 
     /**
@@ -105,12 +113,15 @@ class CoroutinesEscPosPrinter(
      * @return Fluent interface
      */
     @Throws(
-        EscPosConnectionException::class,
         EscPosParserException::class,
         EscPosEncodingException::class,
         EscPosBarcodeException::class
     )
-    suspend fun printFormattedText(text: String?, dotsFeedPaper: Int): CoroutinesEscPosPrinter {
+    suspend fun printFormattedText(
+        context: Context,
+        text: String?,
+        dotsFeedPaper: Int
+    ): CoroutinesEscPosPrinter {
         if (printer == null || printerNbrCharactersPerLine == 0) {
             return this
         }
@@ -130,10 +141,10 @@ class CoroutinesEscPosPrinter(
                 }
             }
             if (lastElement is CoroutinesPrinterTextParserString) {
-                printer!!.newLine()
+                printer!!.newLine(context)
             }
         }
-        printer!!.feedPaper(dotsFeedPaper)
+        printer!!.feedPaper(context, dotsFeedPaper)
         return this
     }
     /**
@@ -151,13 +162,16 @@ class CoroutinesEscPosPrinter(
      */
     @JvmOverloads
     @Throws(
-        EscPosConnectionException::class,
         EscPosParserException::class,
         EscPosEncodingException::class,
         EscPosBarcodeException::class
     )
-    suspend fun printFormattedTextAndCut(text: String?, mmFeedPaper: Float = 20f): CoroutinesEscPosPrinter {
-        return this.printFormattedTextAndCut(text, mmToPx(mmFeedPaper))
+    suspend fun printFormattedTextAndCut(
+        context: Context,
+        text: String?,
+        mmFeedPaper: Float = 20f
+    ): CoroutinesEscPosPrinter {
+        return this.printFormattedTextAndCut(context, text, mmToPx(mmFeedPaper))
     }
 
     /**
@@ -168,17 +182,20 @@ class CoroutinesEscPosPrinter(
      * @return Fluent interface
      */
     @Throws(
-        EscPosConnectionException::class,
         EscPosParserException::class,
         EscPosEncodingException::class,
         EscPosBarcodeException::class
     )
-    suspend fun printFormattedTextAndCut(text: String?, dotsFeedPaper: Int): CoroutinesEscPosPrinter {
+    suspend fun printFormattedTextAndCut(
+        context: Context,
+        text: String?,
+        dotsFeedPaper: Int
+    ): CoroutinesEscPosPrinter {
         if (printer == null || printerNbrCharactersPerLine == 0) {
             return this
         }
-        this.printFormattedText(text, dotsFeedPaper)
-        printer!!.cutPaper()
+        this.printFormattedText(context, text, dotsFeedPaper)
+        printer!!.cutPaper(context)
         return this
     }
 
@@ -199,7 +216,7 @@ class CoroutinesEscPosPrinter(
     init {
         GlobalScope.launch {
             if (printer != null) {
-                this@CoroutinesEscPosPrinter.printer = printer.connect()
+                this@CoroutinesEscPosPrinter.printer = printer.connect(context)
             }
         }
     }
