@@ -15,6 +15,7 @@ import android.os.AsyncTask
 import android.os.Bundle
 import android.os.Parcelable
 import android.util.DisplayMetrics
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -33,6 +34,7 @@ import com.dantsu.escposprinter.exceptions.EscPosParserException
 import com.dantsu.escposprinter.textparser.PrinterTextParserImg
 import com.khairo.printer.R
 import com.khairo.printer.databinding.ActivityMainBinding
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
@@ -47,7 +49,7 @@ class MainActivity : AppCompatActivity() {
 
         binding.apply {
             buttonTcp.setOnClickListener {
-                lifecycleScope.launch() {
+                lifecycleScope.launch (Dispatchers.IO) {
                     printTcp()
                 }
             }
@@ -283,7 +285,9 @@ class MainActivity : AppCompatActivity() {
     private suspend fun printTcp() {
         try {
             val printer =
-                CoroutinesEscPosPrinter(TcpConnection("192.168.1.151", 9100), 203, 48f, 32)
+                CoroutinesEscPosPrinter(TcpConnection("192.168.1.151", 9100).apply { connect(this@MainActivity) }, 203, 48f, 32)
+
+            Log.d("dsgsdzfgdfgd", "00000000000000: ${printer.printerConnection.isConnected()}")
 
             val test = "[C]<img>" + PrinterTextParserImg.bitmapToHexadecimalString(
                 printer,

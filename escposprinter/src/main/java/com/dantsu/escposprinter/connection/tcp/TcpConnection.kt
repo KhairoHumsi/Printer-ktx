@@ -1,7 +1,6 @@
 package com.dantsu.escposprinter.connection.tcp
 
 import android.content.Context
-import android.util.Log
 import com.dantsu.exeption.PrintingException.FINISH_PRINTER_DISCONNECTED
 import com.dantsu.exeption.onException
 import java.io.IOException
@@ -24,26 +23,25 @@ class TcpConnection(private val address: String, private val port: Int) : TcpDev
      * @return true if is connected
      */
 
-    override suspend fun isConnected(): Boolean =
+    override fun isConnected(): Boolean =
         socket != null && socket!!.isConnected && super.isConnected()
 
     /**
      * Start socket connection with the TCP device.
      */
     override suspend fun connect(context: Context): TcpConnection {
-        if (this.isConnected()) {
-            return this
-        }
+        if (this.isConnected()) return this
+
         try {
             socket = Socket()
             socket!!.connect(InetSocketAddress(InetAddress.getByName(address), port))
             stream = socket!!.getOutputStream()
             data = ByteArray(0)
+
         } catch (e: IOException) {
             e.printStackTrace()
             socket = null
             stream = null
-            Log.d("dsgsdzfgdfgd", "11111111111111111111: $e")
             onException(context, FINISH_PRINTER_DISCONNECTED)
 //            throw EscPosConnectionException("Unable to connect to TCP device.")
         }

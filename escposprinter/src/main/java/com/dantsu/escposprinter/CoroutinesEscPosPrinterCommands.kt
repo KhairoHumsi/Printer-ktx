@@ -39,6 +39,9 @@ class CoroutinesEscPosPrinterCommands @JvmOverloads constructor(
         printerConnection.disconnect()
     }
 
+    suspend fun isConnected() =
+        printerConnection.isConnected()
+
     /**
      * Reset printers parameters.
      */

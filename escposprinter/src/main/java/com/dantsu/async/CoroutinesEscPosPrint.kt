@@ -1,6 +1,7 @@
 package com.dantsu.async
 
 import android.content.Context
+import android.util.Log
 import com.dantsu.escposprinter.EscPosCharsetEncoding
 import com.dantsu.escposprinter.connection.tcp.TcpDeviceConnection
 import com.dantsu.exeption.PrintingException.FINISH_NO_PRINTER
@@ -32,7 +33,8 @@ class CoroutinesEscPosPrint(private val context: Context) {
             EscPosCharsetEncoding("Arabic", 22)
         )
 
-        printer.printFormattedTextAndCut(context, printerData.textToPrint).apply { disconnectPrinter() }
+        Log.d("dsgsdzfgdfgd", "11111: ${deviceConnection.isConnected()}")
+        printer.printFormattedTextAndCut(context, printerData.textToPrint)
+            .apply { disconnectPrinter() }
     }
-
 }

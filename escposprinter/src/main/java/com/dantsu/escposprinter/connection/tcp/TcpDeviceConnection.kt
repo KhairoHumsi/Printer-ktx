@@ -24,7 +24,7 @@ abstract class TcpDeviceConnection {
      */
 //    open val isConnected: Boolean
 //        get() = stream != null
-    open suspend fun isConnected(): Boolean = this.stream != null
+    open  fun isConnected(): Boolean = this.stream != null
 
     /**
      * Add data to send.
@@ -46,7 +46,7 @@ abstract class TcpDeviceConnection {
     /**
      * Send data to the device.
      */
-    open suspend fun send(context: Context, addWaitingTime: Int) {
+    open fun send(context: Context, addWaitingTime: Int) {
         if (!isConnected()) {
             onException(context, FINISH_PRINTER_DISCONNECTED)
             return

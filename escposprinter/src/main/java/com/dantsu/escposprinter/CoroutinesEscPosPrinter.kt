@@ -63,8 +63,7 @@ class CoroutinesEscPosPrinter(
         printerDpi,
         printerWidthMM,
         printerNbrCharactersPerLine
-    ) {
-    }
+    )
 
     /**
      * Close the connection with the printer.
@@ -125,6 +124,7 @@ class CoroutinesEscPosPrinter(
         if (printer == null || printerNbrCharactersPerLine == 0) {
             return this
         }
+
         val textParser = CoroutinesPrinterTextParser(this)
         val linesParsed = textParser
             .setFormattedText(text!!)
