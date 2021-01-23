@@ -20,6 +20,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.lifecycleScope
 import com.dantsu.async.*
 import com.dantsu.escposprinter.EscPosPrinter
@@ -43,13 +44,15 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
+    private var printer: CoroutinesEscPosPrinter? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
         binding.apply {
             buttonTcp.setOnClickListener {
-                lifecycleScope.launch (Dispatchers.IO) {
+                lifecycleScope.launch(Dispatchers.IO) {
                     printTcp()
                 }
             }
@@ -284,10 +287,15 @@ class MainActivity : AppCompatActivity() {
     ==============================================================================================*/
     private suspend fun printTcp() {
         try {
-            val printer =
-                CoroutinesEscPosPrinter(TcpConnection("192.168.1.151", 9100).apply { connect(this@MainActivity) }, 203, 48f, 32)
+            printer =
+                CoroutinesEscPosPrinter(
+                    TcpConnection(
+                        "192.168.1.151",
+                        9100
+                    ).apply { connect(this@MainActivity) }, 203, 48f, 32
+                )
 
-            Log.d("dsgsdzfgdfgd", "00000000000000: ${printer.printerConnection.isConnected()}")
+            Log.d("dsgsdzfgdfgd", "00000000000000: ${printer!!.printerConnection.isConnected()}")
 
             val test = "[C]<img>" + PrinterTextParserImg.bitmapToHexadecimalString(
                 printer,
@@ -339,7 +347,9 @@ class MainActivity : AppCompatActivity() {
 //             this.printIt(new TcpConnection(ipAddress.getText().toString(), Integer.parseInt(portAddress.getText().toString())));
 //            AsyncTcpEscPosPrint(this).execute(printer.setTextToPrint(test))
 
-            CoroutinesEscPosPrint(this).execute(printer.setTextToPrint(test))
+            val teadfst: LifecycleCoroutineScope = lifecycleScope
+            CoroutinesEscPosPrint(this, lifecycleScope).execute(printer!!.setTextToPrint(test))
+                .apply { printer = null }
 
         } catch (e: NumberFormatException) {
             AlertDialog.Builder(this)

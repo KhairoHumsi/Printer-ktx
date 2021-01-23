@@ -2,6 +2,7 @@ package com.dantsu.escposprinter
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.util.Log
 import com.dantsu.escposprinter.barcode.Barcode
 import com.dantsu.escposprinter.connection.tcp.TcpDeviceConnection
 import com.dantsu.escposprinter.exceptions.EscPosBarcodeException
@@ -357,6 +358,7 @@ class CoroutinesEscPosPrinterCommands @JvmOverloads constructor(
      * @return Fluent interface
      */
     suspend fun cutPaper(context: Context): CoroutinesEscPosPrinterCommands {
+        Log.d("dsgsdzfgdfgd", "44444444444: ${printerConnection.isConnected()}")
         if (!printerConnection.isConnected()) {
             return this
         }
