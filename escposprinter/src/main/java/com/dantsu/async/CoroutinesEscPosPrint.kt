@@ -1,8 +1,6 @@
 package com.dantsu.async
 
 import android.content.Context
-import android.util.Log
-import androidx.lifecycle.LifecycleCoroutineScope
 import com.dantsu.escposprinter.EscPosCharsetEncoding
 import com.dantsu.escposprinter.connection.tcp.TcpDeviceConnection
 import com.dantsu.exeption.PrintingException.FINISH_NO_PRINTER
@@ -10,8 +8,7 @@ import com.dantsu.exeption.onException
 import java.lang.ref.WeakReference
 
 class CoroutinesEscPosPrint(
-    private val context: Context,
-    private val coroutineScope: LifecycleCoroutineScope
+    private val context: Context
 ) {
     private var weakContext: WeakReference<Context> = WeakReference(context)
 
@@ -29,13 +26,11 @@ class CoroutinesEscPosPrint(
 
         val context = weakContext.get() ?: return
         val printer = com.dantsu.escposprinter.CoroutinesEscPosPrinter(
-            context,
             deviceConnection,
             printerData.printerDpi,
             printerData.printerWidthMM,
             printerData.printerNbrCharactersPerLine,
-            EscPosCharsetEncoding("Arabic", 22),
-            coroutineScope
+            EscPosCharsetEncoding("Arabic", 22)
         )
 
         printer.printFormattedTextAndCut(context, printerData.textToPrint)

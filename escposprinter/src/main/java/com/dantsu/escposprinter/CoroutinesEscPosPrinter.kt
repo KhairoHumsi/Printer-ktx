@@ -1,7 +1,6 @@
 package com.dantsu.escposprinter
 
 import android.content.Context
-import androidx.lifecycle.LifecycleCoroutineScope
 import com.dantsu.escposprinter.connection.tcp.TcpDeviceConnection
 import com.dantsu.escposprinter.exceptions.EscPosBarcodeException
 import com.dantsu.escposprinter.exceptions.EscPosEncodingException
@@ -26,12 +25,10 @@ class CoroutinesEscPosPrinter(
      * @param printerNbrCharactersPerLine The maximum number of characters that can be printed on a line.
      */
     constructor(
-        context: Context,
         printerConnection: TcpDeviceConnection?,
         printerDpi: Int,
         printerWidthMM: Float,
-        printerNbrCharactersPerLine: Int,
-        coroutineScope: LifecycleCoroutineScope
+        printerNbrCharactersPerLine: Int
     ) : this(
         printerConnection?.let { CoroutinesEscPosPrinterCommands(it) },
         printerDpi,
@@ -49,13 +46,11 @@ class CoroutinesEscPosPrinter(
      * @param charsetEncoding             Set the charset encoding.
      */
     constructor(
-        context: Context,
         printerConnection: TcpDeviceConnection?,
         printerDpi: Int,
         printerWidthMM: Float,
         printerNbrCharactersPerLine: Int,
-        charsetEncoding: EscPosCharsetEncoding?,
-        coroutineScope: LifecycleCoroutineScope
+        charsetEncoding: EscPosCharsetEncoding?
     ) : this(
         printerConnection?.let { CoroutinesEscPosPrinterCommands(it, charsetEncoding) },
         printerDpi,

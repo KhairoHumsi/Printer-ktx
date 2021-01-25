@@ -19,7 +19,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.lifecycleScope
 import com.dantsu.async.*
 import com.dantsu.escposprinter.EscPosPrinter
@@ -34,6 +33,7 @@ import com.dantsu.escposprinter.exceptions.EscPosParserException
 import com.dantsu.escposprinter.textparser.PrinterTextParserImg
 import com.khairo.printer.R
 import com.khairo.printer.databinding.ActivityMainBinding
+import com.khairo.printer.utils.printViaWifi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -289,64 +289,25 @@ class MainActivity : AppCompatActivity() {
             printer =
                 CoroutinesEscPosPrinter(
                     TcpConnection(
-                        "192.168.1.160",
-                        9100
+                        binding.tcpIp.text.toString(),
+                        binding.tcpPort.text.toString().toInt()
                     ).apply { connect(this@MainActivity) }, 203, 48f, 32
                 )
 
-            val test = "[C]<img>" + PrinterTextParserImg.bitmapToHexadecimalString(
-                printer,
-                this.applicationContext.resources.getDrawableForDensity(
-                    R.drawable.logo,
-                    DisplayMetrics.DENSITY_MEDIUM
-                )
-            ) + "</img>\n" +
-                    "[L]\n" +
-                    "[C]<img>" + PrinterTextParserImg.bitmapToHexadecimalString(
-                printer,
-                this.applicationContext.resources.getDrawableForDensity(
-                    R.drawable.logo2,
-                    DisplayMetrics.DENSITY_MEDIUM
-                )
-            ) + "</img>\n" +
-                    "[L]\n" +
-                    "[C]<u><font size='big'>ORDER N°045</font></u>\n" +
-                    "[L]\n" +
-                    "[C]================================\n" +
-                    "[L]\n" +
-                    "[L]<b>BEAUTIFUL SHIRT</b>[R]9.99e\n" +
-                    "[L]  + Size : S\n" +
-                    "[L]\n" +
-                    "[L]<b>AWESOME HAT</b>[R]24.99e\n" +
-                    "[L]  + Size : 57/58\n" +
-                    "[L]\n" +
-                    "[C]--------------------------------\n" +
-                    "[R]TOTAL PRICE :[R]34.98e\n" +
-                    "[R]TAX :[R]4.23e\n" +
-                    "[L]\n" +
-                    "[C]================================\n" +
-                    "[L]\n" +
-                    "[L]<u><font color='bg-black' size='tall'>Customer :</font></u>\n" +
-                    "[L]Raymond DUPONT\n" +
-                    "[L]5 rue des girafes\n" +
-                    "[L]31547 PERPETES\n" +
-                    "[L]Tel : +33801201456\n" +
-                    "\n" +
-                    "[C]<barcode type='128' height='10'>83125478455134567890</barcode>\n" +
-                    "[L]\n" +
-                    "[C]<qrcode size='20'>http://www.developpeur-web.dantsu.com/</qrcode>\n" +
-                    "[L]\n" +
-                    "[L]\n" +
-                    "[L]\n" +
-                    "[L]\n" +
-                    "[L]\n" +
-                    "[L]\n"
 //             this.printIt(new TcpConnection(ipAddress.getText().toString(), Integer.parseInt(portAddress.getText().toString())));
 //            AsyncTcpEscPosPrint(this).execute(printer.setTextToPrint(test))
 
-            val teadfst: LifecycleCoroutineScope = lifecycleScope
-            CoroutinesEscPosPrint(this, lifecycleScope).execute(printer!!.setTextToPrint(test))
-                .apply { printer = null }
+                CoroutinesEscPosPrint(this).execute(
+                    printViaWifi(
+                        printer!!,
+                        45,
+                        body,
+                        34.98f,
+                        4,
+                        customer,
+                        "83125478455134567890"
+                    )
+                ).apply { printer = null }
 
         } catch (e: NumberFormatException) {
             AlertDialog.Builder(this)
@@ -374,7 +335,7 @@ class MainActivity : AppCompatActivity() {
                 "[L]\n" +
                 "[R] PAYMENT METHOD :[R]Visa\n"
 
-    val customer: String
+    private val customer: String
         get() =
             "[C]================================\n" +
                     "[L]\n" +

@@ -46,7 +46,7 @@
                     android:text="@string/ip" />
 
                 <androidx.appcompat.widget.AppCompatEditText
-                    android:id="@+id/edittext_tcp_ip"
+                    android:id="@+id/tcp_ip"
                     android:layout_width="170dp"
                     android:layout_height="wrap_content"
                     android:digits="0123456789."
@@ -61,7 +61,7 @@
                     android:text="@string/port" />
 
                 <androidx.appcompat.widget.AppCompatEditText
-                    android:id="@+id/edittext_tcp_port"
+                    android:id="@+id/tcp_port"
                     android:layout_width="80dp"
                     android:text="@string/ex_port"
                     android:layout_height="wrap_content"
