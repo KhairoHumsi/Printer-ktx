@@ -2,7 +2,6 @@ package com.dantsu.escposprinter
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.util.Log
 import com.dantsu.escposprinter.barcode.Barcode
 import com.dantsu.escposprinter.connection.tcp.TcpDeviceConnection
 import com.dantsu.escposprinter.exceptions.EscPosBarcodeException

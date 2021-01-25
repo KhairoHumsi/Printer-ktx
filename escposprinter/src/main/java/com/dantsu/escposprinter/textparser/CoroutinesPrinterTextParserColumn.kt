@@ -105,7 +105,7 @@ class CoroutinesPrinterTextParserColumn(textParserLine: CoroutinesPrinterTextPar
         barcodeAttributes: Hashtable<String, String>,
         code: String
     ): CoroutinesPrinterTextParserColumn {
-        return prependElement(CoroutinesPrinterTextParserQRCode(this, textAlign, barcodeAttributes, code))
+        return prependElement(CoroutinesPrinterTextParserBarcode(this, textAlign, barcodeAttributes, code))
     }
 
     @Throws(EscPosParserException::class, EscPosBarcodeException::class)
@@ -115,7 +115,7 @@ class CoroutinesPrinterTextParserColumn(textParserLine: CoroutinesPrinterTextPar
         code: String
     ): CoroutinesPrinterTextParserColumn {
         return this.appendElement(
-            CoroutinesPrinterTextParserQRCode(
+            CoroutinesPrinterTextParserBarcode(
                 this,
                 textAlign,
                 barcodeAttributes,
