@@ -358,7 +358,6 @@ class CoroutinesEscPosPrinterCommands @JvmOverloads constructor(
      * @return Fluent interface
      */
     suspend fun cutPaper(context: Context): CoroutinesEscPosPrinterCommands {
-        Log.d("dsgsdzfgdfgd", "44444444444: ${printerConnection.isConnected()}")
         if (!printerConnection.isConnected()) {
             return this
         }

@@ -1,7 +1,6 @@
 package com.dantsu.escposprinter
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.LifecycleCoroutineScope
 import com.dantsu.escposprinter.connection.tcp.TcpDeviceConnection
 import com.dantsu.escposprinter.exceptions.EscPosBarcodeException
@@ -10,18 +9,13 @@ import com.dantsu.escposprinter.exceptions.EscPosParserException
 import com.dantsu.escposprinter.textparser.*
 import com.dantsu.exeption.PrintingException.FINISH_NO_PRINTER
 import com.dantsu.exeption.onException
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 class CoroutinesEscPosPrinter(
-    context: Context,
-    printer: CoroutinesEscPosPrinterCommands?,
+    var printer: CoroutinesEscPosPrinterCommands?,
     printerDpi: Int,
     printerWidthMM: Float,
-    printerNbrCharactersPerLine: Int,
-    coroutineScope: LifecycleCoroutineScope
+    printerNbrCharactersPerLine: Int
 ) : EscPosPrinterSize(printerDpi, printerWidthMM, printerNbrCharactersPerLine) {
-    private var printer: CoroutinesEscPosPrinterCommands? = null
 
     /**
      * Create new instance of EscPosPrinter.
@@ -39,12 +33,10 @@ class CoroutinesEscPosPrinter(
         printerNbrCharactersPerLine: Int,
         coroutineScope: LifecycleCoroutineScope
     ) : this(
-        context,
         printerConnection?.let { CoroutinesEscPosPrinterCommands(it) },
         printerDpi,
         printerWidthMM,
-        printerNbrCharactersPerLine,
-        coroutineScope
+        printerNbrCharactersPerLine
     )
 
     /**
@@ -65,12 +57,10 @@ class CoroutinesEscPosPrinter(
         charsetEncoding: EscPosCharsetEncoding?,
         coroutineScope: LifecycleCoroutineScope
     ) : this(
-        context,
         printerConnection?.let { CoroutinesEscPosPrinterCommands(it, charsetEncoding) },
         printerDpi,
         printerWidthMM,
-        printerNbrCharactersPerLine,
-        coroutineScope
+        printerNbrCharactersPerLine
     )
 
     /**
@@ -199,7 +189,6 @@ class CoroutinesEscPosPrinter(
         text: String?,
         dotsFeedPaper: Int
     ): CoroutinesEscPosPrinter {
-        Log.d("dsgsdzfgdfgd", "333333333333: ${printer!!.isConnected()}")
         if (printer == null || printerNbrCharactersPerLine == 0) {
             onException(context, FINISH_NO_PRINTER)
             return this
@@ -216,16 +205,4 @@ class CoroutinesEscPosPrinter(
     val encoding: EscPosCharsetEncoding
         get() = printer!!.getCharsetEncoding()!!
 
-    init {
-        coroutineScope.launch(Dispatchers.IO) {
-            if (this@CoroutinesEscPosPrinter.printer == null)
-                if (printer != null) {
-                    Log.d("dsgsdzfgdfgd", "3546564564: $")
-                    this@CoroutinesEscPosPrinter.printer = printer.connect(context)
-                } else Log.d(
-                    "dsgsdzfgdfgd",
-                    "3546564564: asdada ${this@CoroutinesEscPosPrinter.printer}"
-                )
-        }
-    }
 }

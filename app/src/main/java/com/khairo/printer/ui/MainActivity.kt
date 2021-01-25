@@ -15,7 +15,6 @@ import android.os.AsyncTask
 import android.os.Bundle
 import android.os.Parcelable
 import android.util.DisplayMetrics
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -290,12 +289,10 @@ class MainActivity : AppCompatActivity() {
             printer =
                 CoroutinesEscPosPrinter(
                     TcpConnection(
-                        "192.168.1.151",
+                        "192.168.1.160",
                         9100
                     ).apply { connect(this@MainActivity) }, 203, 48f, 32
                 )
-
-            Log.d("dsgsdzfgdfgd", "00000000000000: ${printer!!.printerConnection.isConnected()}")
 
             val test = "[C]<img>" + PrinterTextParserImg.bitmapToHexadecimalString(
                 printer,

@@ -3,7 +3,6 @@ package com.khairo.printer.utils
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.DisplayMetrics
-import com.dantsu.async.AsyncEscPosPrinter
 import com.dantsu.async.CoroutinesEscPosPrinter
 import com.dantsu.escposprinter.connection.tcp.TcpConnection
 import com.dantsu.escposprinter.textparser.PrinterTextParserImg
@@ -71,9 +70,17 @@ fun Context.printViaWifi(
     val printer = CoroutinesEscPosPrinter(TcpConnection(ip, port), 203, 48f, 32)
 
     var test =
-        "[C]<img>" + PrinterTextParserImg.bitmapToHexadecimalString(printer, this.getApplicationContext().getResources().getDrawableForDensity(R.drawable.logo, DisplayMetrics.DENSITY_MEDIUM)) + "</img>\n" +
+        "[C]<img>" + PrinterTextParserImg.bitmapToHexadecimalString(
+            printer,
+            this.getApplicationContext().getResources()
+                .getDrawableForDensity(R.drawable.logo, DisplayMetrics.DENSITY_MEDIUM)
+        ) + "</img>\n" +
                 "[L]\n" +
-                "[C]<img>" + PrinterTextParserImg.bitmapToHexadecimalString(printer, this.getApplicationContext().getResources().getDrawableForDensity(R.drawable.logo2, DisplayMetrics.DENSITY_MEDIUM)) + "</img>\n" +
+                "[C]<img>" + PrinterTextParserImg.bitmapToHexadecimalString(
+            printer,
+            this.getApplicationContext().getResources()
+                .getDrawableForDensity(R.drawable.logo2, DisplayMetrics.DENSITY_MEDIUM)
+        ) + "</img>\n" +
                 "[L]\n" +
                 "[C]<u><font size='big'>ORDER N°$orderId</font></u>\n" +
                 "[L]\n" +

@@ -38,7 +38,6 @@ class CoroutinesEscPosPrint(
             coroutineScope
         )
 
-        Log.d("dsgsdzfgdfgd", "11111: ${deviceConnection.isConnected()}")
         printer.printFormattedTextAndCut(context, printerData.textToPrint)
             .apply { disconnectPrinter() }
     }
