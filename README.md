@@ -63,7 +63,7 @@ To test this library, it's pretty simple !
 
 ## Installation
 
-**Step 1.** Add the [JitPack](https://jitpack.io/#khairo/ESCPOS-ThermalPrinter-Android/2.0.8) repository to your build file. Add it in your root `/build.gradle` at the end of repositories:
+**Step 1.** Add the [JitPack](https://jitpack.io/#KhairoHumsi/Printer-ktx) repository to your build file. Add it in your root `/build.gradle` at the end of repositories:
 
 ```
 allprojects {
@@ -79,7 +79,7 @@ allprojects {
 ```
 dependencies {
     ...
-    implementation 'com.github.khairo:ESCPOS-ThermalPrinter-Android:2.0.8'
+    implementation 'com.github.KhairoHumsi:Printer-ktx:1.0.1'
 }
 ```
 
