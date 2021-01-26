@@ -3,7 +3,7 @@
 
 # This Android library was created by Alary Franck (DantSu)
 
-This android library just converted to kotlin, the original [java library link](https://github.com/khairo/ESCPOS-ThermalPrinter-Android).
+This android library just converted to kotlin, the original [java library link](https://github.com/DantSu/ESCPOS-ThermalPrinter-Android).
 
 # Android library for ESC/POS Thermal Printer
 
