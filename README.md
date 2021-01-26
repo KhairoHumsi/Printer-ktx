@@ -1,4 +1,7 @@
 [![Jitpack package repository - ESCPOS-ThermalPrinter-Android v2.0.8](https://jitpack.io/v/KhairoHumsi/Printer-ktx.svg)](https://jitpack.io/#KhairoHumsi/Printer-ktx)
+[![GitHub issues](https://img.shields.io/github/issues/KhairoHumsi/rinter-ktx.svg)](https://github.com/KhairoHumsi/rinter-ktx/issues)
+[![GitHub forks](https://img.shields.io/github/forks/KhairoHumsi/rinter-ktx.svg)](https://github.com/KhairoHumsi/rinter-ktx/network)
+[![GitHub stars](https://img.shields.io/github/stars/KhairoHumsi/rinter-ktx.svg)]
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 # This Android library was created by Alary Franck (DantSu)
