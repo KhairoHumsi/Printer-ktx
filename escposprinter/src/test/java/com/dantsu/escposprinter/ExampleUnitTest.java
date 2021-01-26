@@ -1,4 +1,4 @@
-package com.dantsu.escposprinter;
+package com.khairo.escposprinter;
 
 import org.junit.Test;
 

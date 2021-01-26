@@ -1,8 +1,8 @@
-<manifest package="com.dantsu.escposprinter"
+<manifest package="com.khairo.escposprinter"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <application
-        android:name="com.dantsu.common.App"
+        android:name="com.khairo.common.App"
         android:allowBackup="true"
         android:label="@string/app_name"
         android:supportsRtl="true">

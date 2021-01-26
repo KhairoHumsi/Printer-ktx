@@ -2,9 +2,8 @@ package com.khairo.printer.utils
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.util.DisplayMetrics
-import com.dantsu.async.CoroutinesEscPosPrinter
-import com.dantsu.escposprinter.textparser.PrinterTextParserImg
+import com.khairo.coroutines.CoroutinesEscPosPrinter
+import com.khairo.escposprinter.textparser.PrinterTextParserImg
 import com.khairo.printer.R
 import java.text.SimpleDateFormat
 import java.util.*
@@ -73,7 +72,7 @@ fun Context.printViaWifi(
             "[C]<u><font size='big'>VISIT HIS SITE</font></u>\n" +
             "[L]\n" +
             "[L]\n" +
-            "[C]<qrcode size='20'>http://www.developpeur-web.dantsu.com/</qrcode>\n" +
+            "[C]<qrcode size='20'>http://www.developpeur-web.khairo.com/</qrcode>\n" +
             "[L]\n" +
             "[L]\n" +
             "[L]\n" +

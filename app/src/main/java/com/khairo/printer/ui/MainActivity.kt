@@ -20,17 +20,19 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
-import com.dantsu.async.*
-import com.dantsu.escposprinter.EscPosPrinter
-import com.dantsu.escposprinter.connection.DeviceConnection
-import com.dantsu.escposprinter.connection.tcp.TcpConnection
-import com.dantsu.escposprinter.connection.usb.UsbConnection
-import com.dantsu.escposprinter.connection.usb.UsbPrintersConnections
-import com.dantsu.escposprinter.exceptions.EscPosBarcodeException
-import com.dantsu.escposprinter.exceptions.EscPosConnectionException
-import com.dantsu.escposprinter.exceptions.EscPosEncodingException
-import com.dantsu.escposprinter.exceptions.EscPosParserException
-import com.dantsu.escposprinter.textparser.PrinterTextParserImg
+import com.khairo.async.*
+import com.khairo.coroutines.CoroutinesEscPosPrint
+import com.khairo.coroutines.CoroutinesEscPosPrinter
+import com.khairo.escposprinter.EscPosPrinter
+import com.khairo.escposprinter.connection.DeviceConnection
+import com.khairo.escposprinter.connection.tcp.TcpConnection
+import com.khairo.escposprinter.connection.usb.UsbConnection
+import com.khairo.escposprinter.connection.usb.UsbPrintersConnections
+import com.khairo.escposprinter.exceptions.EscPosBarcodeException
+import com.khairo.escposprinter.exceptions.EscPosConnectionException
+import com.khairo.escposprinter.exceptions.EscPosEncodingException
+import com.khairo.escposprinter.exceptions.EscPosParserException
+import com.khairo.escposprinter.textparser.PrinterTextParserImg
 import com.khairo.printer.R
 import com.khairo.printer.databinding.ActivityMainBinding
 import com.khairo.printer.utils.printViaWifi
@@ -158,7 +160,12 @@ class MainActivity : AppCompatActivity() {
         AsyncTask.execute {
             try {
                 val format = SimpleDateFormat("'on' yyyy-MM-dd 'at' HH:mm:ss")
-                val printer = EscPosPrinter(printerConnection, 203, 48f, 32)
+                val printer = EscPosPrinter(
+                    printerConnection,
+                    203,
+                    48f,
+                    32
+                )
                 printer
                     .printFormattedText(
                         "[C]<img>" + PrinterTextParserImg.bitmapToHexadecimalString(
@@ -193,7 +200,7 @@ class MainActivity : AppCompatActivity() {
                                 "[L]Tel : +33801201456\n" +
                                 "[L]\n" +
                                 "[C]<barcode type='128' height='10'>83125478455134567890</barcode>\n" +
-                                "[C]<qrcode size='20'>http://www.developpeur-web.dantsu.com/</qrcode>" +
+                                "[C]<qrcode size='20'>http://www.developpeur-web.khairo.com/</qrcode>" +
                                 "[L]\n" +
                                 "[L]\n" +
                                 "[L]\n" +
@@ -271,7 +278,7 @@ class MainActivity : AppCompatActivity() {
                     "\n" +
                     "[C]<barcode type='128' height='10'>83125478455134567890</barcode>\n" +
                     "[L]\n" +
-                    "[C]<qrcode size='20'>http://www.developpeur-web.dantsu.com/</qrcode>\n" +
+                    "[C]<qrcode size='20'>http://www.developpeur-web.khairo.com/</qrcode>\n" +
                     "[L]\n" +
                     "[L]\n" +
                     "[L]\n" +
@@ -297,17 +304,17 @@ class MainActivity : AppCompatActivity() {
 //             this.printIt(new TcpConnection(ipAddress.getText().toString(), Integer.parseInt(portAddress.getText().toString())));
 //            AsyncTcpEscPosPrint(this).execute(printer.setTextToPrint(test))
 
-                CoroutinesEscPosPrint(this).execute(
-                    printViaWifi(
-                        printer!!,
-                        45,
-                        body,
-                        34.98f,
-                        4,
-                        customer,
-                        "83125478455134567890"
-                    )
-                ).apply { printer = null }
+            CoroutinesEscPosPrint(this).execute(
+                printViaWifi(
+                    printer!!,
+                    45,
+                    body,
+                    34.98f,
+                    4,
+                    customer,
+                    "83125478455134567890"
+                )
+            ).apply { printer = null }
 
         } catch (e: NumberFormatException) {
             AlertDialog.Builder(this)

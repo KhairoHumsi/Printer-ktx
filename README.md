@@ -1,9 +1,9 @@
-[![Jitpack package repository - ESCPOS-ThermalPrinter-Android v2.0.8](https://jitpack.io/v/DantSu/ESCPOS-ThermalPrinter-Android.svg)](https://jitpack.io/#DantSu/ESCPOS-ThermalPrinter-Android/2.0.8)
+[![Jitpack package repository - ESCPOS-ThermalPrinter-Android v2.0.8](https://jitpack.io/v/khairo/ESCPOS-ThermalPrinter-Android.svg)](https://jitpack.io/#khairo/ESCPOS-ThermalPrinter-Android/2.0.8)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-# This Android library was created by Alary Franck (DantSu)
+# This Android library was created by Alary Franck (khairo)
 
-This android library just converted to kotlin, the original [java library link](https://github.com/DantSu/ESCPOS-ThermalPrinter-Android).
+This android library just converted to kotlin, the original [java library link](https://github.com/khairo/ESCPOS-ThermalPrinter-Android).
 
 # Android library for ESC/POS Thermal Printer
 
@@ -31,11 +31,11 @@ Useful library to help Android developers to print with (Bluetooth, TCP, USB) ES
 - [Charset encoding](#charset-encoding)
 - [Formatted text : syntax guide](#formatted-text--syntax-guide)
 - [Class list](#class-list)
-  - [BluetoothPrintersConnections](#user-content-class--comdantsuescposprinterconnectionbluetoothbluetoothprintersconnections)
-  - [UsbPrintersConnections](#user-content-class--comdantsuescposprinterconnectionusbusbprintersconnections)
-  - [EscPosPrinter](#user-content-class--comdantsuescposprinterescposprinter)
-  - [PrinterTextParserImg](#user-content-class--comdantsuescposprintertextparserprintertextparserimg)
-  - [EscPosCharsetEncoding](#user-content-class--comdantsuescposprinterescposcharsetencoding)
+  - [BluetoothPrintersConnections](#user-content-class--comkhairoescposprinterconnectionbluetoothbluetoothprintersconnections)
+  - [UsbPrintersConnections](#user-content-class--comkhairoescposprinterconnectionusbusbprintersconnections)
+  - [EscPosPrinter](#user-content-class--comkhairoescposprinterescposprinter)
+  - [PrinterTextParserImg](#user-content-class--comkhairoescposprintertextparserprintertextparserimg)
+  - [EscPosCharsetEncoding](#user-content-class--comkhairoescposprinterescposcharsetencoding)
 - [Contributing](#contributing)
 
 
@@ -57,13 +57,13 @@ Developed for SDK version 16 (Android 4.1 Jelly Bean) and above.
 To test this library, it's pretty simple !
 
 - Create a directory and open a terminal inside
-- Run `git clone https://github.com/DantSu/ESCPOS-ThermalPrinter-Android.git .`
+- Run `git clone https://github.com/khairo/ESCPOS-ThermalPrinter-Android.git .`
 - Open the directory with Android Studio
 - Test it !
 
 ## Installation
 
-**Step 1.** Add the [JitPack](https://jitpack.io/#DantSu/ESCPOS-ThermalPrinter-Android/2.0.8) repository to your build file. Add it in your root `/build.gradle` at the end of repositories:
+**Step 1.** Add the [JitPack](https://jitpack.io/#khairo/ESCPOS-ThermalPrinter-Android/2.0.8) repository to your build file. Add it in your root `/build.gradle` at the end of repositories:
 
 ```
 allprojects {
@@ -79,7 +79,7 @@ allprojects {
 ```
 dependencies {
     ...
-    implementation 'com.github.DantSu:ESCPOS-ThermalPrinter-Android:2.0.8'
+    implementation 'com.github.khairo:ESCPOS-ThermalPrinter-Android:2.0.8'
 }
 ```
 
@@ -132,13 +132,13 @@ printer
         "[L]Tel : +33801201456\n" +
         "[L]\n" +
         "[C]<barcode type='ean13' height='10'>831254784551</barcode>\n" +
-        "[C]<qrcode size='20'>http://www.developpeur-web.dantsu.com/</qrcode>"
+        "[C]<qrcode size='20'>http://www.developpeur-web.khairo.com/</qrcode>"
     );
 ```
 
 Below a picture of the receipt printed with the code above :
 
-![Example of a printed receipt](http://www.developpeur-web.dantsu.com/files/librairie/receipt-thermal-printer.png?1)
+![Example of a printed receipt](http://www.developpeur-web.khairo.com/files/librairie/receipt-thermal-printer.png?1)
 
 ## TCP
 
@@ -182,7 +182,7 @@ new Thread(new Runnable() {
                     "[L]Tel : +33801201456\n" +
                     "[L]\n" +
                     "[C]<barcode type='ean13' height='10'>831254784551</barcode>\n" +
-                    "[C]<qrcode size='20'>http://www.developpeur-web.dantsu.com/</qrcode>"
+                    "[C]<qrcode size='20'>http://www.developpeur-web.khairo.com/</qrcode>"
                 );
         } catch (Exception e) {
             e.printStackTrace();
@@ -263,7 +263,7 @@ printer
         "[L]Tel : +33801201456\n" +
         "[L]\n" +
         "[C]<barcode type='ean13' height='10'>831254784551</barcode>\n" +
-        "[C]<qrcode size='20'>http://www.developpeur-web.dantsu.com/</qrcode>"
+        "[C]<qrcode size='20'>http://www.developpeur-web.khairo.com/</qrcode>"
     );
 ```
 
@@ -361,7 +361,7 @@ Prints a EAN8 barcode (height: 10mm, width: ~70% printer width, text: displayed 
 Prints a UPC-A barcode (height: 20mm, width: ~70% printer width, text: displayed below).
 - `<barcode type='upce' height='25' width='50' text='none'>512789</barcode>` : **(6 numbers)**  
 Prints a UPC-E barcode (height: 25mm, width: ~50mm, text: hidden).
-- `<barcode type='128' width='40' text='above'>DantSu</barcode>` : **(string)**  
+- `<barcode type='128' width='40' text='above'>khairo</barcode>` : **(string)**  
 Prints a barcode 128 (height: 10mm, width: ~40mm, text: displayed above).
 
 **⚠ WARNING ⚠** : This tag has several constraints :
@@ -375,7 +375,7 @@ Prints a barcode 128 (height: 10mm, width: ~40mm, text: displayed above).
 
 `<qrcode></qrcode>` tag allows you to print a QR code. Inside the tag you need to write the QR code data.
 
-- `<qrcode>http://www.developpeur-web.dantsu.com/</qrcode>` :
+- `<qrcode>http://www.developpeur-web.khairo.com/</qrcode>` :
 Prints a QR code with a width and height of 20 millimeters.
 - `<qrcode size='25'>123456789</qrcode>` :
 Prints a QR code with a width and height of 25 millimeters.
@@ -389,7 +389,7 @@ Prints a QR code with a width and height of 25 millimeters.
 
 ## Class list
 
-### Class : `com.dantsu.escposprinter.connection.bluetooth.BluetoothPrintersConnections`
+### Class : `com.khairo.escposprinter.connection.bluetooth.BluetoothPrintersConnections`
 
 #### **Static** Method : `selectFirstPaired()`
 Easy way to get the first bluetooth printer paired / connected.
@@ -399,7 +399,7 @@ Easy way to get the first bluetooth printer paired / connected.
 Get a list of bluetooth printers.
 - **return** `BluetoothConnection[]`
 
-### Class : `com.dantsu.escposprinter.connection.usb.UsbPrintersConnections`
+### Class : `com.khairo.escposprinter.connection.usb.UsbPrintersConnections`
 
 #### **Static** Method : `selectFirstConnected()`
 Easy way to get the first USB printer connected.
@@ -409,7 +409,7 @@ Easy way to get the first USB printer connected.
 Get a list of USB printers.
 - **return** `UsbConnection[]`
 
-### Class : `com.dantsu.escposprinter.EscPosPrinter`
+### Class : `com.khairo.escposprinter.EscPosPrinter`
 
 #### Constructor : `EscPosPrinter(DeviceConnection printer, int printerDpi, float printingWidthMM, int nbrCharactersPerLine [, EscPosCharsetEncoding charsetEncoding])`
 - **param** `DeviceConnection printer` : Instance of a connected printer
@@ -486,7 +486,7 @@ Convert Bitmap object to ESC/POS image.
 - **param** `Bitmap bitmap` : Instance of Bitmap
 - **return** `byte[]` : Bytes contain the image in ESC/POS command
 
-### Class : `com.dantsu.escposprinter.textparser.PrinterTextParserImg`
+### Class : `com.khairo.escposprinter.textparser.PrinterTextParserImg`
 
 #### **Static** Method : `bitmapToHexadecimalString(Printer printer, Drawable drawable)`
 Convert Drawable instance to a hexadecimal string of the image data.
@@ -516,7 +516,7 @@ Convert hexadecimal string of the image data to bytes ESC/POS command.
 - **param** `String hexString` : Hexadecimal string of the image data.
 - **return** `byte[]` : Bytes contain the image in ESC/POS command.
 
-### Class : `com.dantsu.escposprinter.EscPosCharsetEncoding`
+### Class : `com.khairo.escposprinter.EscPosCharsetEncoding`
 
 #### Constructor : `EscPosCharsetEncoding(String charsetName, int escPosCharsetId)`
 - **param** `charsetName` Name of charset encoding (Ex: ISO-8859-1)
