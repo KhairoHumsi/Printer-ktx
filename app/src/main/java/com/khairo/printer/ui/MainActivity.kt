@@ -19,24 +19,25 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
-import com.dantsu.async.AsyncBluetoothEscPosPrint
-import com.dantsu.async.AsyncEscPosPrinter
-import com.dantsu.async.AsyncTcpEscPosPrint
-import com.dantsu.async.AsyncUsbEscPosPrint
-import com.dantsu.escposprinter.EscPosPrinter
-import com.dantsu.escposprinter.connection.DeviceConnection
-import com.dantsu.escposprinter.connection.tcp.TcpConnection
-import com.dantsu.escposprinter.connection.usb.UsbConnection
-import com.dantsu.escposprinter.connection.usb.UsbPrintersConnections
-import com.dantsu.escposprinter.exceptions.EscPosBarcodeException
-import com.dantsu.escposprinter.exceptions.EscPosConnectionException
-import com.dantsu.escposprinter.exceptions.EscPosEncodingException
-import com.dantsu.escposprinter.exceptions.EscPosParserException
-import com.dantsu.escposprinter.textparser.PrinterTextParserImg
+import androidx.lifecycle.lifecycleScope
+import com.khairo.async.*
+import com.khairo.coroutines.CoroutinesEscPosPrint
+import com.khairo.coroutines.CoroutinesEscPosPrinter
+import com.khairo.escposprinter.EscPosPrinter
+import com.khairo.escposprinter.connection.DeviceConnection
+import com.khairo.escposprinter.connection.tcp.TcpConnection
+import com.khairo.escposprinter.connection.usb.UsbConnection
+import com.khairo.escposprinter.connection.usb.UsbPrintersConnections
+import com.khairo.escposprinter.exceptions.EscPosBarcodeException
+import com.khairo.escposprinter.exceptions.EscPosConnectionException
+import com.khairo.escposprinter.exceptions.EscPosEncodingException
+import com.khairo.escposprinter.exceptions.EscPosParserException
+import com.khairo.escposprinter.textparser.PrinterTextParserImg
 import com.khairo.printer.R
 import com.khairo.printer.databinding.ActivityMainBinding
-import com.khairo.printer.utils.barcodeGenerator
 import com.khairo.printer.utils.printViaWifi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -44,13 +45,17 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
+    private var printer: CoroutinesEscPosPrinter? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
         binding.apply {
             buttonTcp.setOnClickListener {
-                printTcp()
+                lifecycleScope.launch(Dispatchers.IO) {
+                    printTcp()
+                }
             }
 
             buttonBluetooth.setOnClickListener {
@@ -155,7 +160,12 @@ class MainActivity : AppCompatActivity() {
         AsyncTask.execute {
             try {
                 val format = SimpleDateFormat("'on' yyyy-MM-dd 'at' HH:mm:ss")
-                val printer = EscPosPrinter(printerConnection, 203, 48f, 32)
+                val printer = EscPosPrinter(
+                    printerConnection,
+                    203,
+                    48f,
+                    32
+                )
                 printer
                     .printFormattedText(
                         "[C]<img>" + PrinterTextParserImg.bitmapToHexadecimalString(
@@ -190,7 +200,7 @@ class MainActivity : AppCompatActivity() {
                                 "[L]Tel : +33801201456\n" +
                                 "[L]\n" +
                                 "[C]<barcode type='128' height='10'>83125478455134567890</barcode>\n" +
-                                "[C]<qrcode size='20'>http://www.developpeur-web.dantsu.com/</qrcode>" +
+                                "[C]<qrcode size='20'>http://www.developpeur-web.khairo.com/</qrcode>" +
                                 "[L]\n" +
                                 "[L]\n" +
                                 "[L]\n" +
@@ -268,7 +278,7 @@ class MainActivity : AppCompatActivity() {
                     "\n" +
                     "[C]<barcode type='128' height='10'>83125478455134567890</barcode>\n" +
                     "[L]\n" +
-                    "[C]<qrcode size='20'>http://www.developpeur-web.dantsu.com/</qrcode>\n" +
+                    "[C]<qrcode size='20'>http://www.developpeur-web.khairo.com/</qrcode>\n" +
                     "[L]\n" +
                     "[L]\n" +
                     "[L]\n" +
@@ -281,47 +291,31 @@ class MainActivity : AppCompatActivity() {
     /*==============================================================================================
     =========================================TCP PART===============================================
     ==============================================================================================*/
-    private fun printTcp() {
+    private suspend fun printTcp() {
         try {
-            val printer = AsyncEscPosPrinter(TcpConnection("192.168.1.151", 9100), 203, 48f, 32)
+            printer =
+                CoroutinesEscPosPrinter(
+                    TcpConnection(
+                        binding.tcpIp.text.toString(),
+                        binding.tcpPort.text.toString().toInt()
+                    ).apply { connect(this@MainActivity) }, 203, 48f, 32
+                )
 
-            val test = "[C]<img>" + PrinterTextParserImg.bitmapToHexadecimalString(printer, this.applicationContext.resources.getDrawableForDensity(R.drawable.logo, DisplayMetrics.DENSITY_MEDIUM)) + "</img>\n" +
-                    "[L]\n" +
-                    "[C]<img>" + PrinterTextParserImg.bitmapToHexadecimalString(printer, this.applicationContext.resources.getDrawableForDensity(R.drawable.logo2, DisplayMetrics.DENSITY_MEDIUM)) + "</img>\n" +
-                    "[L]\n" +
-                    "[C]<u><font size='big'>ORDER N°045</font></u>\n" +
-                    "[L]\n" +
-                    "[C]================================\n" +
-                    "[L]\n" +
-                    "[L]<b>BEAUTIFUL SHIRT</b>[R]9.99e\n" +
-                    "[L]  + Size : S\n" +
-                    "[L]\n" +
-                    "[L]<b>AWESOME HAT</b>[R]24.99e\n" +
-                    "[L]  + Size : 57/58\n" +
-                    "[L]\n" +
-                    "[C]--------------------------------\n" +
-                    "[R]TOTAL PRICE :[R]34.98e\n" +
-                    "[R]TAX :[R]4.23e\n" +
-                    "[L]\n" +
-                    "[C]================================\n" +
-                    "[L]\n" +
-                    "[L]<u><font color='bg-black' size='tall'>Customer :</font></u>\n" +
-                    "[L]Raymond DUPONT\n" +
-                    "[L]5 rue des girafes\n" +
-                    "[L]31547 PERPETES\n" +
-                    "[L]Tel : +33801201456\n" +
-                    "\n" +
-                    "[C]<barcode type='128' height='10'>83125478455134567890</barcode>\n" +
-                    "[L]\n" +
-                    "[C]<qrcode size='20'>http://www.developpeur-web.dantsu.com/</qrcode>\n" +
-                    "[L]\n" +
-                    "[L]\n" +
-                    "[L]\n" +
-                    "[L]\n" +
-                    "[L]\n" +
-                    "[L]\n"
 //             this.printIt(new TcpConnection(ipAddress.getText().toString(), Integer.parseInt(portAddress.getText().toString())));
-            AsyncTcpEscPosPrint(this).execute(printer.setTextToPrint(test))
+//            AsyncTcpEscPosPrint(this).execute(printer.setTextToPrint(test))
+
+            CoroutinesEscPosPrint(this).execute(
+                printViaWifi(
+                    printer!!,
+                    45,
+                    body,
+                    34.98f,
+                    4,
+                    customer,
+                    "83125478455134567890"
+                )
+            ).apply { printer = null }
+
         } catch (e: NumberFormatException) {
             AlertDialog.Builder(this)
                 .setTitle("Invalid TCP port address")
@@ -331,34 +325,36 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun body(): String = "[L]\n" +
-            "[L]    <b>Pizza</b>[R][R]3[R][R]55 $\n" +
-            "[L]      + Olive[R][R]1 $\n" +
-            "[L]      + Cheese[R][R]5 $\n" +
-            "[L]      + Mushroom[R][R]7 $\n" +
-            "[L]\n" +
-            "[L]    <b>Burger</b>[R][R]7[R][R]43.54 $\n" +
-            "[L]      + Cheese[R][R]3 $\n" +
-            "[L]\n" +
-            "[L]    <b>Shawarma</b>[R][R]2[R][R]4 $\n" +
-            "[L]      + Garlic[R][R]0.5 $\n" +
-            "[L]\n" +
-            "[L]    <b>Steak</b>[R][R]3[R][R]75 $\n" +
-            "[L]\n" +
-            "[R] PAYMENT METHOD :[R]Visa\n"
+    private val body: String
+        get() = "[L]\n" +
+                "[L]    <b>Pizza</b>[R][R]3[R][R]55 $\n" +
+                "[L]      + Olive[R][R]1 $\n" +
+                "[L]      + Cheese[R][R]5 $\n" +
+                "[L]      + Mushroom[R][R]7 $\n" +
+                "[L]\n" +
+                "[L]    <b>Burger</b>[R][R]7[R][R]43.54 $\n" +
+                "[L]      + Cheese[R][R]3 $\n" +
+                "[L]\n" +
+                "[L]    <b>Shawarma</b>[R][R]2[R][R]4 $\n" +
+                "[L]      + Garlic[R][R]0.5 $\n" +
+                "[L]\n" +
+                "[L]    <b>Steak</b>[R][R]3[R][R]75 $\n" +
+                "[L]\n" +
+                "[R] PAYMENT METHOD :[R]Visa\n"
 
-    private fun customer(): String =
-        "[C]================================\n" +
-                "[L]\n" +
-                "[L]<b>Delivery</b>[R]5 $\n" +
-                "[L]\n" +
-                "[L]<u><font color='bg-black' size='tall'>Customer :</font></u>\n" +
-                "[L]Name : Mohammad khair\n" +
-                "[L]Phone : 00962787144627\n" +
-                "[L]Area : Khalda\n" +
-                "[L]street : testing street\n" +
-                "[L]building : 9\n" +
-                "[L]Floor : 2\n" +
-                "[L]Apartment : 1\n" +
-                "[L]Note : This order is just for testing\n"
+    private val customer: String
+        get() =
+            "[C]================================\n" +
+                    "[L]\n" +
+                    "[L]<b>Delivery</b>[R]5 $\n" +
+                    "[L]\n" +
+                    "[L]<u><font color='bg-black' size='tall'>Customer :</font></u>\n" +
+                    "[L]Name : Mohammad khair\n" +
+                    "[L]Phone : 00962787144627\n" +
+                    "[L]Area : Khalda\n" +
+                    "[L]street : testing street\n" +
+                    "[L]building : 9\n" +
+                    "[L]Floor : 2\n" +
+                    "[L]Apartment : 1\n" +
+                    "[L]Note : This order is just for testing\n"
 }

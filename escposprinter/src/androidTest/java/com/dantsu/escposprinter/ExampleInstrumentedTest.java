@@ -1,4 +1,4 @@
-package com.dantsu.escposprinter;
+package com.khairo.escposprinter;
 
 import android.content.Context;
 
@@ -22,6 +22,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
 
-        assertEquals("com.dantsu.thermalprinter_escpos.test", appContext.getPackageName());
+        assertEquals("com.khairo.thermalprinter_escpos.test", appContext.getPackageName());
     }
 }
