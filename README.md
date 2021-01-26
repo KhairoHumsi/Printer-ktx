@@ -1,7 +1,7 @@
 [![Jitpack package repository - ESCPOS-ThermalPrinter-Android v2.0.8](https://jitpack.io/v/khairo/ESCPOS-ThermalPrinter-Android.svg)](https://jitpack.io/#khairo/ESCPOS-ThermalPrinter-Android/2.0.8)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-# This Android library was created by Alary Franck (khairo)
+# This Android library was created by Alary Franck (DantSu)
 
 This android library just converted to kotlin, the original [java library link](https://github.com/khairo/ESCPOS-ThermalPrinter-Android).
 
