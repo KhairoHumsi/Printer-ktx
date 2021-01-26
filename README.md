@@ -150,45 +150,128 @@ Be sure to have `<uses-permission android:name="android.permission.INTERNET"/>` 
 
 The code below is an example to write in your activity :
 
-```java
-new Thread(new Runnable() {
-    public void run() {
+```kotlin
+private var printer: CoroutinesEscPosPrinter? = null
+
+override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        lifecycleScope.launch (Dispatchers.IO) { printTcp() }
+
+    }
+
+private suspend fun printTcp() {
         try {
-            EscPosPrinter printer = new EscPosPrinter(new TcpConnection("192.168.1.3", 9300), 203, 48f, 32);
-            printer
-                .printFormattedText(
-                    "[C]<img>" + PrinterTextParserImg.bitmapToHexadecimalString(printer, getApplicationContext().getResources().getDrawableForDensity(R.drawable.logo, DisplayMetrics.DENSITY_MEDIUM)) + "</img>\n" +
-                    "[L]\n" +
-                    "[C]<u><font size='big'>ORDER N°045</font></u>\n" +
-                    "[L]\n" +
-                    "[C]================================\n" +
-                    "[L]\n" +
-                    "[L]<b>BEAUTIFUL SHIRT</b>[R]9.99e\n" +
-                    "[L]  + Size : S\n" +
-                    "[L]\n" +
-                    "[L]<b>AWESOME HAT</b>[R]24.99e\n" +
-                    "[L]  + Size : 57/58\n" +
-                    "[L]\n" +
-                    "[C]--------------------------------\n" +
-                    "[R]TOTAL PRICE :[R]34.98e\n" +
-                    "[R]TAX :[R]4.23e\n" +
-                    "[L]\n" +
-                    "[C]================================\n" +
-                    "[L]\n" +
-                    "[L]<font size='tall'>Customer :</font>\n" +
-                    "[L]Raymond DUPONT\n" +
-                    "[L]5 rue des girafes\n" +
-                    "[L]31547 PERPETES\n" +
-                    "[L]Tel : +33801201456\n" +
-                    "[L]\n" +
-                    "[C]<barcode type='ean13' height='10'>831254784551</barcode>\n" +
-                    "[C]<qrcode size='20'>http://www.developpeur-web.khairo.com/</qrcode>"
-                );
-        } catch (Exception e) {
-            e.printStackTrace();
+            printer = CoroutinesEscPosPrinter(TcpConnection("192.168.1.160", 9100).apply { connect(this@MainActivity) }, 203, 48f, 32)
+
+            CoroutinesEscPosPrint(this).execute(
+                    printViaWifi(
+                            printer!!,
+                            45,
+                            body,
+                            34.98f,
+                            4,
+                            customer,
+                            "83125478455134567890"
+                    )
+            ).apply { printer = null }
+
+        } catch (e: NumberFormatException) {
+            AlertDialog.Builder(this)
+                    .setTitle("Invalid TCP port address")
+                    .setMessage("Port field must be a number.")
+                    .show()
+            e.printStackTrace()
         }
     }
-}).start();
+
+    private val body: String
+        get() = "[L]\n" +
+                "[L]    <b>Pizza</b>[R][R]3[R][R]55 $\n" +
+                "[L]      + Olive[R][R]1 $\n" +
+                "[L]      + Cheese[R][R]5 $\n" +
+                "[L]      + Mushroom[R][R]7 $\n" +
+                "[L]\n" +
+                "[L]    <b>Burger</b>[R][R]7[R][R]43.54 $\n" +
+                "[L]      + Cheese[R][R]3 $\n" +
+                "[L]\n" +
+                "[L]    <b>Shawarma</b>[R][R]2[R][R]4 $\n" +
+                "[L]      + Garlic[R][R]0.5 $\n" +
+                "[L]\n" +
+                "[L]    <b>Steak</b>[R][R]3[R][R]75 $\n" +
+                "[L]\n" +
+                "[R] PAYMENT METHOD :[R]Visa\n"
+
+    private val customer: String
+        get() =
+            "[C]================================\n" +
+                    "[L]\n" +
+                    "[L]<b>Delivery</b>[R]5 $\n" +
+                    "[L]\n" +
+                    "[L]<u><font color='bg-black' size='tall'>Customer :</font></u>\n" +
+                    "[L]Name : Mohammad khair\n" +
+                    "[L]Phone : 00962787144627\n" +
+                    "[L]Area : Khalda\n" +
+                    "[L]street : testing street\n" +
+                    "[L]building : 9\n" +
+                    "[L]Floor : 2\n" +
+                    "[L]Apartment : 1\n" +
+                    "[L]Note : This order is just for testing\n"
+
+
+
+    @SuppressLint("UseCompatLoadingForDrawables")
+    fun Context.printViaWifi(
+            printer: CoroutinesEscPosPrinter,
+            orderId: Int,
+            body: String,
+            totalBill: Float,
+            tax: Int,
+            customer: String = "",
+            barcode: String
+    ): CoroutinesEscPosPrinter {
+
+        var test =
+                "[C]<img>" + PrinterTextParserImg.bitmapToHexadecimalString(
+                        printer,
+                        getDrawable(R.drawable.logo)
+                ) + "</img>\n" +
+                        "[L]\n" +
+                        "[C]<u><font size='big'>ORDER N°$orderId</font></u>\n" +
+                        "[L]\n" +
+                        "[C]<u type='double'>${"'on' yyyy-MM-dd 'at' HH:mm:ss".getDateTime()}</u>\n" +
+                        "[C]================================\n" +
+                        "[L]\n" +
+                        "[L]    <b>Items</b>[R][R]<b>Qty</b>[R][R]<b>Price</b>\n" +
+                        "[L][R]\n" +
+                        "$body\n" +
+                        "[L][R]\n" +
+                        "[C]--------------------------------\n" +
+                        "[R] TOTAL :[R]${totalBill} $\n"
+
+        test += if (tax != 0) "[R] TAX :[R]${tax} %\n" + "[R] GRAND TOTAL :[R]${totalBill * (tax / 100f) + totalBill} $\n" else ""
+
+        test += "[L][R]\n" +
+                "$customer\n" +
+                "[C]<barcode type='128' height='10'>$barcode</barcode>\n" +
+                "[L]\n" +
+                "[C]<u><font size='big'>VISIT HIS SITE</font></u>\n" +
+                "[L]\n" +
+                "[L]\n" +
+                "[C]<qrcode size='20'>http://www.developpeur-web.khairo.com/</qrcode>\n" +
+                "[L]\n" +
+                "[L]\n" +
+                "[L]\n" +
+                "[L]\n" +
+                "[L]\n"
+
+        return printer.setTextToPrint(test)
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    fun String.getDateTime(): String = SimpleDateFormat(this).format(Date())
+    
 ```
 
 ## USB
